@@ -1,0 +1,3 @@
+"Code","Names","Type"
+"^NSEI","National Stock Exchange","Equity"
+"BEL.NS","Bharat Electronics Limited","Electricals"

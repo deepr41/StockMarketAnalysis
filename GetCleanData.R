@@ -44,6 +44,7 @@ args<-as.vector(read.csv("Companies.txt")[,1])
 
 for(i in args){
   findDetails(i)
+  # Sys.sleep(1)
   # print(i)
 }
 

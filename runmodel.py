@@ -13,7 +13,7 @@ from runScripts import GetData
 # sns.set_style("whitegrid")
 # blue, = sns.color_palette("muted", 1)
 
-predictRange = 30
+predictRange = 200
 
 def drawPredict(predictRange,fileName):
 	print(predictRange,fileName)

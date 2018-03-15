@@ -66,13 +66,16 @@ def formatData(fileName):
             else:
                 upcount=upcount+1
                 upsum = upsum + df[myIndexes[4]][i-j]
-        rsUP = upsum/upcount
-        rsDW = downsum/downcount
-        
-        rs = np.float64(100)-(np.float64(100)/(np.float64(1)+rsUP/rsDW))
-        
-        
-        temp.append(rs)
+        try:
+            rsUP = upsum/upcount
+            rsDW = downsum/downcount
+            
+            rs = np.float64(100)-(np.float64(100)/(np.float64(1)+rsUP/rsDW))
+            
+            
+            temp.append(rs)
+        except:
+            temp.append(np.NAN)
     #df.drop(columns='Diff',inplace=True)
     df['RSI'] = temp
     #Feature 2 : Money Flow Index (MFI)
@@ -109,10 +112,13 @@ def formatData(fileName):
             else:
                 pos=pos+1
                 possum = possum + df['MF'][i-j]
-        mrUP = possum/pos
-        mrDW = negsum/neg
-        rs = np.float64(100)-(np.float64(100)/(np.float64(1)+mrUP/mrDW))
-        mfiList.append(rs)
+        try:
+            mrUP = possum/pos
+            mrDW = negsum/neg
+            rs = np.float64(100)-(np.float64(100)/(np.float64(1)+mrUP/mrDW))
+            mfiList.append(rs)
+        except:
+            mfiList.append(np.NAN)
     df['MFI'] = mfiList
 
 
@@ -181,6 +187,7 @@ def main():
     args = args = os.listdir("./Data/Raw")
     for i in args:
         formatData(i)
+        print(i)
         # print("Data formattedData",args[i])
 
 

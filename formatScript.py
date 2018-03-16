@@ -5,10 +5,7 @@ import sys
 import os
 #import data from csv fill
 
-
-
-def formatData(fileName):
-    def findEMA(TimeInterval,finalName,feature):
+def findEMA(TimeInterval,finalName,feature,df):
         emaMultiplier = 2/(TimeInterval+1)
         EMAlist = [np.NAN]*(TimeInterval-1)
         for i in range(TimeInterval-1,len(df)):
@@ -25,13 +22,14 @@ def formatData(fileName):
             EMAlist.append(EMA[-1])
             #print(EMA)
         df[finalName] = EMAlist
+
+def formatData(fileName,outputName):
     df = pd.read_csv("Data/Raw/"+fileName)
     #try:
     #    df.drop(columns=["Unnamed: 0"],inplace=True)
     #except:
     #    print("No Unamed column")
     myIndexes = df.columns
-    #df.dropna(inplace=True)+
 
 
     #myIndexes
@@ -69,15 +67,16 @@ def formatData(fileName):
         try:
             rsUP = upsum/upcount
             rsDW = downsum/downcount
-            
             rs = np.float64(100)-(np.float64(100)/(np.float64(1)+rsUP/rsDW))
-            
-            
             temp.append(rs)
         except:
             temp.append(np.NAN)
     #df.drop(columns='Diff',inplace=True)
     df['RSI'] = temp
+
+
+
+
     #Feature 2 : Money Flow Index (MFI)
     #The Money Flow Index (MFI) is an oscillator that uses both price and volume to measure buying and selling pressure. 
     #Typical Price = (High + Low + Close)/3
@@ -87,7 +86,6 @@ def formatData(fileName):
     #1 - High, 2 - Low, 3 - Close
 
     mfiInternalLength = 14
-
     typicalPriceList = []
     rawMoneyFlowList = []
 
@@ -97,8 +95,6 @@ def formatData(fileName):
         rawMoneyFlowList.append(tempTypical * df[myIndexes[5]][i])
     df['Typical Price'] = typicalPriceList
     df['MF'] = rawMoneyFlowList
-
-
     mfiList = [np.NAN]*mfiInternalLength
     for i in range(mfiInternalLength,len(df)):
         pos = 0
@@ -131,7 +127,7 @@ def formatData(fileName):
     #EMA: {Close - EMA(previous day)} x multiplier + EMA(previous day). 
 
     emaTimeInterval = 10
-    findEMA(emaTimeInterval,'EMA',df[myIndexes[4]])
+    findEMA(emaTimeInterval,'EMA',df[myIndexes[4]],df)
 
 
     #Feature 4 : Stocastic oscillator
@@ -149,7 +145,6 @@ def formatData(fileName):
         low=[]
         #high = np.max(df[myIndexes[2]][i-soTimeInterval:i+1])
         #low = np.min(df[myIndexes[3]][i-soTimeInterval:i+1])
-        
         for j in range(0,soTimeInterval):
             high.append(df[myIndexes[2]][i-(soTimeInterval-j)+1])
             low.append(df[myIndexes[3]][i-(soTimeInterval-j)+1])
@@ -157,38 +152,35 @@ def formatData(fileName):
         low = np.min(low)
         tempSO = (close-low)/(high-low)
         soList.append(tempSO)
-    #print(len(soList),len(df))
     df['SO'] = soList
 
     #Feature 5 : Moving Average Convergence/ Divergence
     #MACD Line: (12-day EMA - 26-day EMA)
-
     #Signal Line: 9-day EMA of MACD Line
-
     #MACD Histogram: MACD Line - Signal Line
-    findEMA(12,'EMA12',df[myIndexes[4]])
-    findEMA(26,'EMA26',df[myIndexes[4]])
-
-
+    findEMA(12,'EMA12',df[myIndexes[4]],df)
+    findEMA(26,'EMA26',df[myIndexes[4]],df)
     df['MACD'] = df['EMA12']-df['EMA26']
-    findEMA(9,'Signal Line',df['MACD'])
+    findEMA(9,'Signal Line',df['MACD'],df)
+
 
     #Reminder MACD, Signal line
-    data = (df[['Date','RSI','MFI','EMA','SO','MACD','Diff',myIndexes[4]]])
+    #Writing Data to output file
+    df['Close'] = df[myIndexes[4]]
+    data = (df[['Date','RSI','MFI','EMA','SO','MACD','Diff','Close']])
     data = data.dropna()
     data = data.reset_index()
     data = data.drop(columns=['index'])
-
-    data.to_csv("./Data/Formatted/"+fileName[:-7]+"formattedData.csv")
+    data.to_csv("./Data/Formatted/"+outputName)
     # print(data)
 
 
 def main():
     args = args = os.listdir("./Data/Raw")
     for i in args:
-        formatData(i)
-        print(i)
-        # print("Data formattedData",args[i])
+        print("Started ",i,"   ",end="")
+        formatData(i,i[:-7]+"formattedData.csv")
+        print("Ended")
 
 
 main()

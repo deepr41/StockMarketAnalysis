@@ -2,7 +2,7 @@ from mlmodel import *
 import numpy as np
 import pandas as pd
 import os
-from _thread import start_new_thread	
+# from _thread import start_new_thread	
 import matplotlib.pyplot as plt
 from sklearn import preprocessing
 
@@ -18,6 +18,7 @@ predictRange = 200
 def drawPredict(predictRange,fileName):
 	print(predictRange,fileName)
 	df = pd.read_csv("./Data/Formatted/"+fileName)
+	df.dropna(inplace=True)
 	df.drop(columns=['Unnamed: 0'],inplace=True)
 	myindex = df.columns
 	X = df[['RSI',"MFI",'EMA','SO','MACD']]

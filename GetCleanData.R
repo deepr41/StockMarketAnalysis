@@ -33,18 +33,19 @@ findDetails<- function(companyname){
    #the file is written to "./Data/Raw"
   write.csv(paste("./Data/Raw/",paste(companyname,"Raw.csv",sep = ""),sep = ""),x=df,row.names = F,eol = "\n")
   
-  print("Details Written")
+  print(companyname )
   #print(length(myList))
 
 }
 #retrieve arguments from command line
 
 
-args<-as.vector(read.csv("Companies.txt")[,1])
+args<-as.vector(read.csv("Companies.txt")[,1]) 
 
 for(i in args){
+  # print(i)
   findDetails(i)
   # Sys.sleep(1)
   # print(i)
 }
-
+print("Completed")

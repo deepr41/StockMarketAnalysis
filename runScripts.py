@@ -10,8 +10,3 @@ def cleanFectedData():
 def GetData():
 	runFetchData()
 	cleanFectedData()
-
-# if __name__ == '__main__':
-	
-
-# main()

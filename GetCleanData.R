@@ -31,7 +31,10 @@ findDetails<- function(companyname){
   companyname<-gsub('.','_',x = companyname,fixed = TRUE)
    #output the proper csv file
    #the file is written to "./Data/Raw"
-  write.csv(paste("./Data/Raw/",paste(companyname,"Raw.csv",sep = ""),sep = ""),x=df,row.names = F,eol = "\n")
+  folder <- paste(paste("./Data/",companyname,sep=""),"/",sep="")
+  fileName <-"Raw.csv"
+  dir.create(folder, showWarnings = FALSE)
+  write.csv(paste(folder,fileName,sep = ""),x=df,row.names = F,eol = "\n")
   
   print(companyname )
   #print(length(myList))
@@ -40,7 +43,8 @@ findDetails<- function(companyname){
 #retrieve arguments from command line
 
 
-args<-as.vector(read.csv("Companies.txt")[,1]) 
+args<-as.vector(read.csv("Companies.txt")[,1])
+dir.create("./Data/", showWarnings = FALSE)
 
 for(i in args){
   # print(i)

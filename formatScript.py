@@ -23,8 +23,8 @@ def findEMA(TimeInterval,finalName,feature,df):
             #print(EMA)
         df[finalName] = EMAlist
 
-def formatData(fileName,outputName):
-    df = pd.read_csv("Data/Raw/"+fileName)
+def formatData(folderPath,rawPath,outputPath):
+    df = pd.read_csv(folderPath+rawPath)
     #try:
     #    df.drop(columns=["Unnamed: 0"],inplace=True)
     #except:
@@ -171,16 +171,19 @@ def formatData(fileName,outputName):
     data = data.dropna()
     data = data.reset_index()
     data = data.drop(columns=['index'])
-    data.to_csv("./Data/Formatted/"+outputName)
+    data.to_csv(folderPath+outputPath)
     # print(data)
 
 
 def main():
-    args = args = os.listdir("./Data/Raw")
+    dataPath = "./Data/"
+    args = args = os.listdir(dataPath)
     for i in args:
-        print("Started ",i,"   ",end="")
-        formatData(i,i[:-7]+"formattedData.csv")
-        print("Ended")
+        rawFilePath = dataPath+i
+        print("Started ",i,"   ")
+        formatData(rawFilePath,"/Raw.csv","/Data.csv")
+        # print("Ended")
+        # print(rawFilePath,rawFilePath+"/Raw.csv",rawFilePath+"/Data.csv")
 
 
 main()

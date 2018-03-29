@@ -1,5 +1,5 @@
-from mlmodel import *
-import numpy as np
+from BasicSVMModel import myClassifer,myTrain,mypredict
+import numpy as np		
 import pandas as pd
 import os
 # from _thread import start_new_thread	
@@ -8,18 +8,23 @@ from sklearn import preprocessing
 
 # import seaborn as sns
 
-from runScripts import GetData
 # GetData()
 # sns.set_style("whitegrid")
 # blue, = sns.color_palette("muted", 1)
 
-predictRange = 200
+predictRange = 7
 
-def drawPredict(predictRange,fileName):
-	print(predictRange,fileName)
-	df = pd.read_csv("./Data/Formatted/"+fileName)
+def drawPredict(predictRange,companyName):
+	print(predictRange,companyName)
+	df = pd.read_csv("./Data/"+companyName+"/Data.csv")
 	df.dropna(inplace=True)
-	df.drop(columns=['Unnamed: 0'],inplace=True)
+	# df.reset_index(inplace=True)
+	df.reset_index(inplace=True)
+	try:
+		df.drop(columns=['Unnamed: 0'],inplace=True)
+		df.drop(columns=['index'],inplace=True)
+	except:
+		pass
 	myindex = df.columns
 	X = df[['RSI',"MFI",'EMA','SO','MACD']]
 	y = df['Diff']
@@ -29,7 +34,7 @@ def drawPredict(predictRange,fileName):
 	X_train = np.array(X[:-predictRange])
 	y_train = np.array(y[:-predictRange])
 	X_test = np.array(X[-predictRange:])
-	y_test = np.array(y[-predictRange:])
+	# y_test = np.array(y[-predictRange:])
 	#Normalize data
 
 
@@ -66,14 +71,15 @@ def drawPredict(predictRange,fileName):
 
 	plt.xlabel('Date')
 	plt.ylabel('Close')
-	plt.title(fileName[:-17])
+	plt.title(companyName[:-17])
 	plt.legend()
 	plt.show()
 
 def main():
-	args = os.listdir("./Data/Formatted")
+	args = os.listdir("./Data/")
 	for i in args:
 		drawPredict(predictRange,i)
+		# print("./Data/"+i+"/Data.csv")
 
 
 main()

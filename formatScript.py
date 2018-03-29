@@ -14,7 +14,7 @@ def findEMA(TimeInterval,finalName,feature,df):
 
             #initialEMA = 0
             #for j in range(0,TimeInterval):
-                #initialEMA = initialEMA + df[myIndexes[4]][i-j]
+                #initialEMA = initialEMA + df['Close'][i-j]
             EMA = [initialEMA]
             for j in range(0,TimeInterval):
                 tempEMA = (feature[i-(TimeInterval-j)+1]-EMA[-1])*emaMultiplier + EMA[-1]
@@ -29,7 +29,8 @@ def formatData(folderPath,rawPath,outputPath):
     #    df.drop(columns=["Unnamed: 0"],inplace=True)
     #except:
     #    print("No Unamed column")
-    myIndexes = df.columns
+    df.columns = ['Date','Open','High','Low','Close','Volume','Adjusted']
+    # myIndexes = df.columns
 
 
     #myIndexes
@@ -49,7 +50,7 @@ def formatData(folderPath,rawPath,outputPath):
 
     rsiInternalLength = 14
 
-    df['Diff'] = df[myIndexes[4]] - df[myIndexes[4]].shift(+1)
+    df['Diff'] = df['Close'] - df['Close'].shift(+1)
 
     temp = [np.NAN]*rsiInternalLength
     for i in range(rsiInternalLength,len(df)):
@@ -60,10 +61,10 @@ def formatData(folderPath,rawPath,outputPath):
         for j in range(0,rsiInternalLength):
             if(df['Diff'][i-j]<0):
                 downcount=downcount+1
-                downsum = downsum + df[myIndexes[4]][i-j]
+                downsum = downsum + df['Close'][i-j]
             else:
                 upcount=upcount+1
-                upsum = upsum + df[myIndexes[4]][i-j]
+                upsum = upsum + df['Close'][i-j]
         try:
             rsUP = upsum/upcount
             rsDW = downsum/downcount
@@ -90,9 +91,9 @@ def formatData(folderPath,rawPath,outputPath):
     rawMoneyFlowList = []
 
     for i in range(0,len(df)):
-        tempTypical = (df[myIndexes[2]][i]+df[myIndexes[3]][i]+df[myIndexes[4]][i])/np.float64(3)
+        tempTypical = (df['High'][i]+df['Low'][i]+df['Close'][i])/np.float64(3)
         typicalPriceList.append(tempTypical)
-        rawMoneyFlowList.append(tempTypical * df[myIndexes[5]][i])
+        rawMoneyFlowList.append(tempTypical * df['Volume'][i])
     df['Typical Price'] = typicalPriceList
     df['MF'] = rawMoneyFlowList
     mfiList = [np.NAN]*mfiInternalLength
@@ -127,7 +128,7 @@ def formatData(folderPath,rawPath,outputPath):
     #EMA: {Close - EMA(previous day)} x multiplier + EMA(previous day). 
 
     emaTimeInterval = 10
-    findEMA(emaTimeInterval,'EMA',df[myIndexes[4]],df)
+    findEMA(emaTimeInterval,'EMA',df['Close'],df)
 
 
     #Feature 4 : Stocastic oscillator
@@ -140,14 +141,14 @@ def formatData(folderPath,rawPath,outputPath):
 
     soList = [np.NAN]*6
     for i in range(soTimeInterval-1,len(df)):
-        close = df[myIndexes[4]][i]
+        close = df['Close'][i]
         high=[]
         low=[]
-        #high = np.max(df[myIndexes[2]][i-soTimeInterval:i+1])
-        #low = np.min(df[myIndexes[3]][i-soTimeInterval:i+1])
+        #high = np.max(df['High'][i-soTimeInterval:i+1])
+        #low = np.min(df['Low'][i-soTimeInterval:i+1])
         for j in range(0,soTimeInterval):
-            high.append(df[myIndexes[2]][i-(soTimeInterval-j)+1])
-            low.append(df[myIndexes[3]][i-(soTimeInterval-j)+1])
+            high.append(df['High'][i-(soTimeInterval-j)+1])
+            low.append(df['Low'][i-(soTimeInterval-j)+1])
         high = np.max(high)
         low = np.min(low)
         tempSO = (close-low)/(high-low)
@@ -158,20 +159,20 @@ def formatData(folderPath,rawPath,outputPath):
     #MACD Line: (12-day EMA - 26-day EMA)
     #Signal Line: 9-day EMA of MACD Line
     #MACD Histogram: MACD Line - Signal Line
-    findEMA(12,'EMA12',df[myIndexes[4]],df)
-    findEMA(26,'EMA26',df[myIndexes[4]],df)
+    findEMA(12,'EMA12',df['Close'],df)
+    findEMA(26,'EMA26',df['Close'],df)
     df['MACD'] = df['EMA12']-df['EMA26']
     findEMA(9,'Signal Line',df['MACD'],df)
 
 
     #Reminder MACD, Signal line
     #Writing Data to output file
-    df['Close'] = df[myIndexes[4]]
-    data = (df[['Date','RSI','MFI','EMA','SO','MACD','Diff','Close']])
-    data = data.dropna()
-    data = data.reset_index()
-    data = data.drop(columns=['index'])
-    data.to_csv(folderPath+outputPath)
+
+    # data = (df[['Date','RSI','MFI','EMA','SO','MACD','Diff','Close']])
+    # data = data.dropna()
+    # data = data.reset_index()
+    # data = data.drop(columns=['index'])
+    df.to_csv(folderPath+outputPath)
     # print(data)
 
 

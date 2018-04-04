@@ -62,7 +62,7 @@ def drawPredict(predictRange,companyName):
 	# for i in range(0,predictRange):
 	#     print((df['Diff'][len(df)-predictRange+i]),yPredicted[i])  
 	
-	    
+	# plt.clf
 	#plot Data
 	plt.plot(df['Date'][-predictRange*2:], acutalClose[-predictRange*2:], color='navy', label='Actual')
 
@@ -73,7 +73,10 @@ def drawPredict(predictRange,companyName):
 	plt.ylabel('Close')
 	plt.title(companyName[:-17])
 	plt.legend()
-	plt.show()
+	# fig.savefig("./Data/"+companyName+"/Figure.png")
+	plt.savefig("./Data/"+companyName+"/Figure.png")
+	plt.close()
+	
 
 def main():
 	args = os.listdir("./Data/")

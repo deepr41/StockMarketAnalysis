@@ -4,7 +4,7 @@ import pandas as pd
 import os
 # from _thread import start_new_thread	
 import matplotlib.pyplot as plt
-from sklearn import preprocessing
+import sklearn.preprocessing as pr
 
 # import seaborn as sns
 
@@ -12,7 +12,7 @@ from sklearn import preprocessing
 # sns.set_style("whitegrid")
 # blue, = sns.color_palette("muted", 1)
 
-predictRange = 7
+predictRange = 30
 
 def drawPredict(predictRange,companyName):
 	print(predictRange,companyName)
@@ -26,15 +26,31 @@ def drawPredict(predictRange,companyName):
 	except:
 		pass
 	myindex = df.columns
-	X = df[['RSI',"MFI",'EMA','SO','MACD']]
+	# X = df[['RSI',"MFI",'EMA','SO','MACD']]
+	# y = df['Diff']
+
+	# preprocessing.normalize(X)
 	y = df['Diff']
+	df1 = df[['RSI','MFI','EMA','SO','MACD']]
+	df1.columns = ['x1','x2','x3','x4','x5']
+	df2 = pd.DataFrame()
+	for i in df1.columns:
+		for j in df1.columns:
+			feature = i+j
+			df2[feature]=df1[i]*df1[j]
+	for i in df1.columns:
+		for j in df1.columns:
+			for k in df1.columns:
+				feature = i+j+k
+				df2[feature]=df1[i]*df1[j]*df1[k]
 
-	preprocessing.normalize(X)
+	df2 = pr.normalize(df2)
 
-	X_train = np.array(X[:-predictRange])
+
+	X_train = np.array(df2[:-predictRange])
 	y_train = np.array(y[:-predictRange])
-	X_test = np.array(X[-predictRange:])
-	# y_test = np.array(y[-predictRange:])
+	X_test = np.array(df2[-predictRange:])
+	y_test = np.array(y[-predictRange:])
 	#Normalize data
 
 
@@ -44,8 +60,8 @@ def drawPredict(predictRange,companyName):
 	myTrain(cls,X_train,y_train)
 	yPredicted = mypredict(cls,X_test)
 	#Finds the Correct ClosePrices
-	print(X_test)
-	print(yPredicted)
+	# print(X_test)
+	# print(yPredicted)
 	acutalClose = [np.NAN]
 	predictedClose = [np.NAN]
 	pro = len(df)-predictRange
@@ -83,6 +99,7 @@ def main():
 	for i in args:
 		drawPredict(predictRange,i)
 		# print("./Data/"+i+"/Data.csv")
+		# print("lol")
 
 
 main()

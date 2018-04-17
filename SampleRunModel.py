@@ -1,4 +1,4 @@
-from BasicSVMModel import myClassifer,myTrain,mypredict
+from Model.BasicSVMModel import myClassifer,myTrain,mypredict
 import numpy as np		
 import pandas as pd
 import os

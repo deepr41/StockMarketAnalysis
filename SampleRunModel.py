@@ -12,7 +12,7 @@ import sklearn.preprocessing as pr
 # sns.set_style("whitegrid")
 # blue, = sns.color_palette("muted", 1)
 
-predictRange = 30
+predictRange = 7
 
 def drawPredict(predictRange,companyName):
 	print(predictRange,companyName)

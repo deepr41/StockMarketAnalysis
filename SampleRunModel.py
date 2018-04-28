@@ -26,7 +26,7 @@ def sampleGBT(predictRange,companyName):
 	y = df['Diff']
 
 
-	poly = PolynomialFeatures(degree=2)
+	poly = PolynomialFeatures(degree=3)
 	df1 = poly.fit_transform(X)
 	initRegularize("./Data/"+companyName,df1)
 	df2 = regularize("./Data/"+companyName,df1)

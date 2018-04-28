@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import PolynomialFeatures
 from Model.ModelIntermediate import createModel,predictValues,trainModel
 from Model.Regularizer import regularize,initRegularize
+from Model.preprocessing import prepareData
 
 
 predictRange = 7
@@ -22,12 +23,10 @@ def sampleGBT(predictRange,companyName):
 	except:
 		pass
 	myindex = df.columns
-	X = df[['RSI',"MFI",'EMA','SO','MACD']]
+	df1 = prepareData(df,1)
 	y = df['Diff']
 
 
-	poly = PolynomialFeatures(degree=3)
-	df1 = poly.fit_transform(X)
 	initRegularize("./Data/"+companyName,df1)
 	df2 = regularize("./Data/"+companyName,df1)
 
@@ -36,14 +35,14 @@ def sampleGBT(predictRange,companyName):
 	X_train = np.array(df2[:-predictRange])
 	y_train = np.array(y[:-predictRange])
 	X_test = np.array(df2[-predictRange:])
-	y_test = np.array(y[-predictRange:])
+	# y_test = np.array(y[-predictRange:])
 	#Normalize data
 
 
 
-	#Training
-	# createModel("./Data/"+companyName,1)
-	# trainModel("./Data/"+companyName,1,X_train,y_train)
+	# Training
+	createModel("./Data/"+companyName,1)
+	trainModel("./Data/"+companyName,1,X_train,y_train)
 	yPredicted = predictValues("./Data/"+companyName,1,X_test)
 	#Finds the Correct ClosePrices
 

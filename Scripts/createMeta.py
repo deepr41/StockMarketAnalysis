@@ -25,4 +25,6 @@ def populateData():
 
 def updateRawData():
     os.system('Rscript Scripts/GetCleanData.R')
+    os.system('python Scripts/formatScript.py')
 # updateRawData()
+populateData()

@@ -39,19 +39,21 @@ def initRegularize(path,df):
 def regularize(path,df):
     #TODO make a model which will load pickle
     #return the modified values
+    meta ={}
     if(isfile(path+'/data.meta')):
         with open(path+'/data.meta','rb') as metaFile:
             meta = pickle.load(metaFile)
-            feature = meta['RegParam']
-            df1 = pd.DataFrame()
-            for i in feature.keys():
-                temp = feature[i]
-                arr = []
-                for j in range(0,len(df)):
-                    arr.append((df[j][i]-temp['Mean'])/(temp['Max']-temp['Min']))
-                df1[i]=arr
-            
-            return df1
+    feature = meta['RegParam']
+    df1 = pd.DataFrame()
+    df1[0]=1*(len(df)-1)
+    for i in feature.keys():
+        temp = feature[i]
+        arr = []
+        for j in range(0,len(df)):
+            arr.append((df[j][i]-temp['Mean'])/(temp['Max']-temp['Min']))
+        df1[i]=arr
+    
+    return df1
 
 
 

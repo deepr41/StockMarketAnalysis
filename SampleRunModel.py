@@ -2,20 +2,15 @@ from Model.BasicSVMModel import myClassifer,myTrain,mypredict
 import numpy as np		
 import pandas as pd
 import os
-# from _thread import start_new_thread	
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import PolynomialFeatures
 from Model.ModelIntermediate import createModel,predictValues,trainModel
 from Model.Regularizer import regularize,initRegularize
-# import seaborn as sns
 
-# GetData()
-# sns.set_style("whitegrid")
-# blue, = sns.color_palette("muted", 1)
 
 predictRange = 7
 
-def drawPredict(predictRange,companyName):
+def sampleGBT(predictRange,companyName):
 	print(predictRange,companyName)
 	df = pd.read_csv("./Data/"+companyName+"/Data.csv")
 	df.dropna(inplace=True)
@@ -30,23 +25,6 @@ def drawPredict(predictRange,companyName):
 	X = df[['RSI',"MFI",'EMA','SO','MACD']]
 	y = df['Diff']
 
-	# preprocessing.normalize(X)
-	# y = df['Diff']
-	# df1 = df[['RSI','MFI','EMA','SO','MACD']]
-
-	# df1.columns = ['x1','x2','x3','x4','x5']
-	# df2 = pd.DataFrame()
-
-
-	# for i in df1.columns:
-	# 	for j in df1.columns:
-	# 		feature = i+j
-	# 		df2[feature]=df1[i]*df1[j]
-	# for i in df1.columns:
-	# 	for j in df1.columns:
-	# 		for k in df1.columns:
-	# 			feature = i+j+k
-	# 			df2[feature]=df1[i]*df1[j]*df1[k]
 
 	poly = PolynomialFeatures(degree=2)
 	df1 = poly.fit_transform(X)
@@ -64,12 +42,11 @@ def drawPredict(predictRange,companyName):
 
 
 	#Training
-	createModel("./Data/"+companyName,1)
-	trainModel("./Data/"+companyName,1,X_train,y_train)
+	# createModel("./Data/"+companyName,1)
+	# trainModel("./Data/"+companyName,1,X_train,y_train)
 	yPredicted = predictValues("./Data/"+companyName,1,X_test)
 	#Finds the Correct ClosePrices
-	# print(X_test)
-	# print(yPredicted)
+
 	acutalClose = [np.NAN]
 	predictedClose = [np.NAN]
 	pro = len(df)-predictRange
@@ -106,7 +83,7 @@ def drawPredict(predictRange,companyName):
 def main():
 	args = os.listdir("./Data/")
 	for i in args:
-		drawPredict(predictRange,i)
+		sampleGBT(predictRange,i)
 		# print("./Data/"+i+"/Data.csv")
 		# print("lol")
 

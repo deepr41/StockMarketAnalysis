@@ -1,8 +1,4 @@
 import numpy as np
-# from sklearn.ensemble import RandomForestClassifier
-# from sklearn.datasets import make_classification
-# from sklearn.svm import SVR
-# from sklearn.ensemble import RandomForestRegressor
 import xgboost as xgb
 
 

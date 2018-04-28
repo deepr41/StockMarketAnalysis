@@ -19,6 +19,7 @@ def findEMA(TimeInterval,finalName,feature,df):
             for j in range(0,TimeInterval):
                 tempEMA = (feature[i-(TimeInterval-j)+1]-EMA[-1])*emaMultiplier + EMA[-1]
                 EMA.append(tempEMA)
+                
             EMAlist.append(EMA[-1])
             #print(EMA)
         df[finalName] = EMAlist

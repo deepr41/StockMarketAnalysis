@@ -4,8 +4,9 @@ import pandas as pd
 import os
 # from _thread import start_new_thread	
 import matplotlib.pyplot as plt
-import sklearn.preprocessing as pr
-
+from sklearn.preprocessing import PolynomialFeatures
+from Model.ModelIntermediate import createModel,predictValues,trainModel
+from Model.Regularizer import regularize,initRegularize
 # import seaborn as sns
 
 # GetData()
@@ -26,25 +27,32 @@ def drawPredict(predictRange,companyName):
 	except:
 		pass
 	myindex = df.columns
-	# X = df[['RSI',"MFI",'EMA','SO','MACD']]
-	# y = df['Diff']
+	X = df[['RSI',"MFI",'EMA','SO','MACD']]
+	y = df['Diff']
 
 	# preprocessing.normalize(X)
-	y = df['Diff']
-	df1 = df[['RSI','MFI','EMA','SO','MACD']]
-	df1.columns = ['x1','x2','x3','x4','x5']
-	df2 = pd.DataFrame()
-	for i in df1.columns:
-		for j in df1.columns:
-			feature = i+j
-			df2[feature]=df1[i]*df1[j]
-	for i in df1.columns:
-		for j in df1.columns:
-			for k in df1.columns:
-				feature = i+j+k
-				df2[feature]=df1[i]*df1[j]*df1[k]
+	# y = df['Diff']
+	# df1 = df[['RSI','MFI','EMA','SO','MACD']]
 
-	df2 = pr.normalize(df2)
+	# df1.columns = ['x1','x2','x3','x4','x5']
+	# df2 = pd.DataFrame()
+
+
+	# for i in df1.columns:
+	# 	for j in df1.columns:
+	# 		feature = i+j
+	# 		df2[feature]=df1[i]*df1[j]
+	# for i in df1.columns:
+	# 	for j in df1.columns:
+	# 		for k in df1.columns:
+	# 			feature = i+j+k
+	# 			df2[feature]=df1[i]*df1[j]*df1[k]
+
+	poly = PolynomialFeatures(degree=2)
+	df1 = poly.fit_transform(X)
+	initRegularize("./Data/"+companyName,df1)
+	df2 = regularize("./Data/"+companyName,df1)
+
 
 
 	X_train = np.array(df2[:-predictRange])
@@ -56,9 +64,9 @@ def drawPredict(predictRange,companyName):
 
 
 	#Training
-	cls = myClassifer()
-	myTrain(cls,X_train,y_train)
-	yPredicted = mypredict(cls,X_test)
+	createModel("./Data/"+companyName,1)
+	trainModel("./Data/"+companyName,1,X_train,y_train)
+	yPredicted = predictValues("./Data/"+companyName,1,X_test)
 	#Finds the Correct ClosePrices
 	# print(X_test)
 	# print(yPredicted)
@@ -80,6 +88,7 @@ def drawPredict(predictRange,companyName):
 	
 	# plt.clf
 	#plot Data
+	plt.close()
 	plt.plot(df['Date'][-predictRange*2:], acutalClose[-predictRange*2:], color='navy', label='Actual')
 
 	plt.plot(df['Date'][-predictRange*2:], predictedClose[-predictRange*2:], color='darkorange',  label='Predicted')
@@ -90,7 +99,7 @@ def drawPredict(predictRange,companyName):
 	plt.title(companyName[:-17])
 	plt.legend()
 	# fig.savefig("./Data/"+companyName+"/Figure.png")
-	plt.savefig("./Data/"+companyName+"/Figure.png")
+	plt.savefig("./Data/"+companyName+"/Example.png")
 	plt.close()
 	
 

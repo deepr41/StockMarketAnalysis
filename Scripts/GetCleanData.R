@@ -42,8 +42,11 @@ findDetails<- function(companyname){
 }
 #retrieve arguments from command line
 
+args<- commandArgs(trailingOnly=TRUE)
+if(length(args)== 0){
+  args<-as.vector(read.csv("Companies.txt")[,1])
+}
 
-args<-as.vector(read.csv("Companies.txt")[,1])
 dir.create("./Data/", showWarnings = FALSE)
 
 for(i in args){

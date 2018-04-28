@@ -6,6 +6,7 @@ import pickle
 #3 - ANN
 from Model.GradientBoostedTrees import *
 from Model.ARIMA import *
+from os.path import isfile
 # from Model.ANN import *
 
 #TODO create a method to access different types of classifier 
@@ -20,6 +21,7 @@ def customName(mode):
     return name
 
 def createModel(path,mode):
+
     name = customName(mode)
     if(mode == 1):
         clf = GBTRegressor()
@@ -27,12 +29,19 @@ def createModel(path,mode):
         clf = ARIMARegressor()
     # elif(mode == 3):
     #     clf = ANNRegressor()
-    pickle.dump(clf,open(path+"/"+name+"regressor.p",'wb'))
-    pass
+    if not (isfile(path+"/"+name+"regressor.p")):
+        with open(path+"/"+name+"regressor.p",'wb') as file:
+            pickle.dump(clf,file)
+    
 
 def trainModel(path,mode,X_train,y_train):
     name = customName(mode)
-    clf = pickle.load(open(path+"/"+name+"regressor.pickle",'rb'))
+    if (isfile(path+"/"+name+"regressor.p")):
+        with open(path+"/"+name+"regressor.p",'rb') as file:
+            clf = pickle.load(file)
+    else:
+        print("Regressor not found")
+        return
     #TODO train logic
     if(mode == 1):
         #Code for GBT
@@ -43,16 +52,22 @@ def trainModel(path,mode,X_train,y_train):
         ARIMATrain(clf,X_train)
     # elif(mode == 3):
     #     #code for ANN
-    #     ANNTrain(clf,X_train,y_train)
+    #     ANNTrain(clf,X_train,y_train) 
 
     #TODO save it as a pickle file
-    pickle.dump(clf,open(path+"/"+name+"regressor.pickle",'wb'))
+    with open(path+"/"+name+"regressor.p",'wb') as file:
+        pickle.dump(clf,file)
     pass
 
 
 def predictValues(path,mode,X_test):
     name = customName(mode)
-    clf = pickle.load(open(path+"/"+name+"regressor.pickle",'rb'))
+    if (isfile(path+"/"+name+"regressor.p")):
+        with open(path+"/"+name+"regressor.p",'rb') as file:
+            clf = pickle.load(file)
+    else: 
+        print("Regressor not found")
+        return
     #TODO predict values and return it
     if(mode == 1):
         #Code for GBT

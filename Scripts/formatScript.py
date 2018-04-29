@@ -5,54 +5,15 @@ import sys
 import os
 #import data from csv fill
 
-def findEMA(TimeInterval,finalName,feature,df):
-        emaMultiplier = 2/(TimeInterval+1)
-        EMAlist = [np.NAN]*(TimeInterval-1)
-        for i in range(TimeInterval-1,len(df)):
-            initialEMA = np.sum(feature[i-TimeInterval+1:i+1])
-            #print(initialEMA)
-
-            #initialEMA = 0
-            #for j in range(0,TimeInterval):
-                #initialEMA = initialEMA + df['Close'][i-j]
-            EMA = [initialEMA]
-            for j in range(0,TimeInterval):
-                tempEMA = (feature[i-(TimeInterval-j)+1]-EMA[-1])*emaMultiplier + EMA[-1]
-                EMA.append(tempEMA)
-                
-            EMAlist.append(EMA[-1])
-            #print(EMA)
-        df[finalName] = EMAlist
-
-def formatData(folderPath,rawPath,outputPath):
-    df = pd.read_csv(folderPath+rawPath)
-    #try:
-    #    df.drop(columns=["Unnamed: 0"],inplace=True)
-    #except:
-    #    print("No Unamed column")
-    df.columns = ['Date','Open','High','Low','Close','Volume','Adjusted']
-    # myIndexes = df.columns
+#TODO make individual functions for each
 
 
-    #myIndexes
-    #0 - Date
-    #1 - Open
-    #2 - High
-    #3 - Low
-    #4 - Close
-    #5 - Volume
-    #6 - Adjusted
-
+def findRSI(df,rsiInternalLength):
     #Feature 1 : RSI (Relative Strength Index)
     #RSI computes the relative strength index of a stock
     #Relative Strength (RS)= Avg of x up days/ Avg of x down days
     #RSI = 100-100/(1+RS)
     #Standard time period to calculate RSI is 14 days
-
-    rsiInternalLength = 14
-
-    df['Diff'] = df['Close'] - df['Close'].shift(+1)
-
     temp = [np.NAN]*rsiInternalLength
     for i in range(rsiInternalLength,len(df)):
         upcount = 0
@@ -76,9 +37,7 @@ def formatData(folderPath,rawPath,outputPath):
     #df.drop(columns='Diff',inplace=True)
     df['RSI'] = temp
 
-
-
-
+def findMFI(df,mfiInternalLength):
     #Feature 2 : Money Flow Index (MFI)
     #The Money Flow Index (MFI) is an oscillator that uses both price and volume to measure buying and selling pressure. 
     #Typical Price = (High + Low + Close)/3
@@ -87,7 +46,6 @@ def formatData(folderPath,rawPath,outputPath):
     #Money Flow Index = 100 - 100/(1 + Money Flow Ratio)
     #1 - High, 2 - Low, 3 - Close
 
-    mfiInternalLength = 14
     typicalPriceList = []
     rawMoneyFlowList = []
 
@@ -119,7 +77,7 @@ def formatData(folderPath,rawPath,outputPath):
             mfiList.append(np.NAN)
     df['MFI'] = mfiList
 
-
+def findEMA(TimeInterval,finalName,feature,df):
     #Feature 3 : Exponential Moving Average (EMA)
     #Moving averages smooth the price data to form a trend following indicator.
     #Despite this lag, moving averages help smooth price action and filter out the noise.
@@ -127,26 +85,37 @@ def formatData(folderPath,rawPath,outputPath):
     #Initial SMA: 10-period sum / 10 
     #Multiplier: (2 / (Time periods + 1) ) = (2 / (10 + 1) ) = 0.1818 (18.18%)
     #EMA: {Close - EMA(previous day)} x multiplier + EMA(previous day). 
+        emaMultiplier = 2/(TimeInterval+1)
+        EMAlist = [np.NAN]*(TimeInterval-1)
+        for i in range(TimeInterval-1,len(df)):
+            initialEMA = np.sum(feature[i-TimeInterval+1:i+1])
+            #print(initialEMA)
 
-    emaTimeInterval = 10
-    findEMA(emaTimeInterval,'EMA',df['Close'],df)
+            #initialEMA = 0
+            #for j in range(0,TimeInterval):
+                #initialEMA = initialEMA + df['Close'][i-j]
+            EMA = [initialEMA]
+            for j in range(0,TimeInterval):
+                tempEMA = (feature[i-(TimeInterval-j)+1]-EMA[-1])*emaMultiplier + EMA[-1]
+                EMA.append(tempEMA)
+                
+            EMAlist.append(EMA[-1])
+            #print(EMA)
+        df[finalName] = EMAlist
 
 
+def findSO(df,soTimeInterval):
     #Feature 4 : Stocastic oscillator
     #Stochastic Oscillator is a momentum indicator that shows the location of the close relative to the 
     #high-low range over a set number of periods.
     #Default time peroid is 14 days but 7 days is used here
     #SO = (Current Close - Lowest Low)/(Highest High - Lowest Low) * 100
 
-    soTimeInterval = 7
-
     soList = [np.NAN]*6
     for i in range(soTimeInterval-1,len(df)):
         close = df['Close'][i]
         high=[]
         low=[]
-        #high = np.max(df['High'][i-soTimeInterval:i+1])
-        #low = np.min(df['Low'][i-soTimeInterval:i+1])
         for j in range(0,soTimeInterval):
             high.append(df['High'][i-(soTimeInterval-j)+1])
             low.append(df['Low'][i-(soTimeInterval-j)+1])
@@ -156,6 +125,7 @@ def formatData(folderPath,rawPath,outputPath):
         soList.append(tempSO)
     df['SO'] = soList
 
+def findMACD(df):
     #Feature 5 : Moving Average Convergence/ Divergence
     #MACD Line: (12-day EMA - 26-day EMA)
     #Signal Line: 9-day EMA of MACD Line
@@ -166,26 +136,42 @@ def formatData(folderPath,rawPath,outputPath):
     findEMA(9,'Signal Line',df['MACD'],df)
 
 
-    #Reminder MACD, Signal line
-    #Writing Data to output file
 
-    # data = (df[['Date','RSI','MFI','EMA','SO','MACD','Diff','Close']])
-    # data = data.dropna()
-    # data = data.reset_index()
-    # data = data.drop(columns=['index'])
+
+
+def formatData(folderPath,rawPath,outputPath):
+    df = pd.read_csv(folderPath+rawPath)
+    df.columns = ['Date','Open','High','Low','Close','Volume','Adjusted']
+
+    df['Diff'] = df['Close'] - df['Close'].shift(+1)
+
+    rsiInternalLength = 14
+    findRSI(df,rsiInternalLength)
+
+    mfiInternalLength = 14
+    findMFI(df,mfiInternalLength)
+
+    emaTimeInterval = 10
+    findEMA(emaTimeInterval,'EMA',df['Close'],df)
+
+    soTimeInterval = 7
+    findSO(df,soTimeInterval)
+
     df.to_csv(folderPath+outputPath)
-    # print(data)
+
 
 
 def main():
     dataPath = "./Data/"
-    args = args = os.listdir(dataPath)
+    if(len(sys.argv[1:])==0):
+        args = args = os.listdir(dataPath)
+    else:
+        args = sys.argv[1:]
     for i in args:
         rawFilePath = dataPath+i
         print("Started ",i,"   ")
         formatData(rawFilePath,"/Raw.csv","/Data.csv")
-        # print("Ended")
-        # print(rawFilePath,rawFilePath+"/Raw.csv",rawFilePath+"/Data.csv")
+
 
 
 main()

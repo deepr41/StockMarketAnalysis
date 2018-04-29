@@ -4,8 +4,8 @@ import pickle
 #1 - Gradient Boosted Trees
 #2 - ARIMA
 #3 - ANN
-from Model.GradientBoostedTrees import *
-from Model.ARIMA import *
+from Model.GradientBoostedTrees import GBTPredict,GBTRegressor,GBTTrain
+from Model.ARIMA import ARIMAPredict,ARIMARegressor,ARIMATrain
 from os.path import isfile
 # from Model.ANN import *
 
@@ -42,11 +42,9 @@ def trainModel(path,mode,X_train,y_train):
     else:
         print("Regressor not found")
         return
-    #TODO train logic
     if(mode == 1):
         #Code for GBT
         GBTTrain(clf,X_train,y_train)
-        pickle.dump(xgb.plot_importance(clf),open(path+'/XGBimptGraph.p','wb'))
     elif(mode == 2):
         #Code for ARIMA
         ARIMATrain(clf,X_train)
@@ -54,7 +52,6 @@ def trainModel(path,mode,X_train,y_train):
     #     #code for ANN
     #     ANNTrain(clf,X_train,y_train) 
 
-    #TODO save it as a pickle file
     with open(path+"/"+name+"regressor.p",'wb') as file:
         pickle.dump(clf,file)
     pass

@@ -86,8 +86,7 @@ def main():
 	args = os.listdir("./Data/")
 	for i in args:
 		sampleModel(predictRange,i,1)
-		# print("./Data/"+i+"/Data.csv")
-		# print("lol")
+
 
 
 main()

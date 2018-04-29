@@ -2,6 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
-Jupyter
+./Jupyter
 .ipynb_checkpoints
 __pycache__

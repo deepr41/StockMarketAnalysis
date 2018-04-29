@@ -2,16 +2,16 @@ from Model.BasicSVMModel import myClassifer,myTrain,mypredict
 import numpy as np		
 import pandas as pd
 import os
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
 from sklearn.preprocessing import PolynomialFeatures
 from Model.ModelIntermediate import createModel,predictValues,trainModel
 from Model.Regularizer import regularize,initRegularize
 from Model.preprocessing import prepareData
 
 
-predictRange = 7
+predictRange = 14
 
-def sampleGBT(predictRange,companyName):
+def sampleModel(predictRange,companyName,mode):
 	print(predictRange,companyName)
 	df = pd.read_csv("./Data/"+companyName+"/Data.csv")
 	df.dropna(inplace=True)
@@ -41,7 +41,7 @@ def sampleGBT(predictRange,companyName):
 
 
 	# Training
-	createModel("./Data/"+companyName,1)
+	createModel("./Data/"+companyName,mode)
 	trainModel("./Data/"+companyName,1,X_train,y_train)
 	yPredicted = predictValues("./Data/"+companyName,1,X_test)
 	#Finds the Correct ClosePrices
@@ -75,14 +75,17 @@ def sampleGBT(predictRange,companyName):
 	plt.title(companyName[:-17])
 	plt.legend()
 	# fig.savefig("./Data/"+companyName+"/Figure.png")
-	plt.savefig("./Data/"+companyName+"/Example.png")
+	if(mode==1):
+		plt.savefig("./Data/"+companyName+"/GBTExample.png")
+	elif(mode==2):
+		plt.savefig("./Data/"+companyName+"/ARIMAExample.png")
 	plt.close()
 	
 
 def main():
 	args = os.listdir("./Data/")
 	for i in args:
-		sampleGBT(predictRange,i)
+		sampleModel(predictRange,i,1)
 		# print("./Data/"+i+"/Data.csv")
 		# print("lol")
 

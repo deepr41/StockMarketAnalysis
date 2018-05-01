@@ -25,6 +25,10 @@ def populateData():
 
 def updateRawData():
     os.system('Rscript Scripts/GetCleanData.R')
-    os.system('python Scripts/formatScript.py')
-# updateRawData()
-populateData()
+    os.system('python Model/formatScript.py')
+
+def main():
+    populateData()
+
+if __name__ == '__main__':
+    main()

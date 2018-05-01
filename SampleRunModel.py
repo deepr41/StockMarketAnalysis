@@ -1,4 +1,4 @@
-from Model.BasicSVMModel import myClassifer,myTrain,mypredict
+
 import numpy as np		
 import pandas as pd
 import os
@@ -9,9 +9,9 @@ from Model.Regularizer import regularize,initRegularize
 from Model.preprocessing import prepareData
 
 
-predictRange = 14
+predictRange = 10
 
-def sampleModel(predictRange,companyName,mode):
+def sampleModel(predictqiRange,companyName,mode):
 	print(predictRange,companyName)
 	df = pd.read_csv("./Data/"+companyName+"/Data.csv")
 	df.dropna(inplace=True)
@@ -23,28 +23,28 @@ def sampleModel(predictRange,companyName,mode):
 	except:
 		pass
 	myindex = df.columns
-	df1 = prepareData(df,1)
-	y = df['Diff']
 
+
+	y = df['Diff']
+	X_train = df[:-predictRange]
+	y_train = y[:-predictRange]
+	X_test = df[-predictRange:]
+	# y_test = y[-predictRange:]
+	
+	df1 = prepareData(X_train,mode)
+	df_test = prepareData(X_test,mode)
 
 	initRegularize("./Data/"+companyName,df1)
-	df2 = regularize("./Data/"+companyName,df1)
-
-
-
-	X_train = np.array(df2[:-predictRange])
-	y_train = np.array(y[:-predictRange])
-	X_test = np.array(df2[-predictRange:])
-	# y_test = np.array(y[-predictRange:])
-	#Normalize data
-
-
+	df1 = regularize("./Data/"+companyName,df1)
+	df_test = regularize("./Data/"+companyName,df_test)
 
 	# Training
 	createModel("./Data/"+companyName,mode)
-	trainModel("./Data/"+companyName,1,X_train,y_train)
-	yPredicted = predictValues("./Data/"+companyName,1,X_test)
-	#Finds the Correct ClosePrices
+	trainModel("./Data/"+companyName,mode,df1,y_train)
+	yPredicted = predictValues("./Data/"+companyName,mode,df_test)
+
+	# print(yPredicted)
+	# Finds the Correct ClosePrices
 
 	acutalClose = [np.NAN]
 	predictedClose = [np.NAN]
@@ -59,16 +59,12 @@ def sampleModel(predictRange,companyName,mode):
 	        tempPre = df[myindex[-1]][i-1]+df['Diff'][i]
 	    predictedClose.append(tempPre)
 
-	# for i in range(0,predictRange):
-	#     print((df['Diff'][len(df)-predictRange+i]),yPredicted[i])  
-	
-	# plt.clf
+
 	#plot Data
 	plt.close()
 	plt.plot(df['Date'][-predictRange*2:], acutalClose[-predictRange*2:], color='navy', label='Actual')
 
 	plt.plot(df['Date'][-predictRange*2:], predictedClose[-predictRange*2:], color='darkorange',  label='Predicted')
-	# ax.fill_between(df['Date'][-predictRange*2:], predictedClose[-predictRange*2:], alpha=.3)
 
 	plt.xlabel('Date')
 	plt.ylabel('Close')
@@ -87,6 +83,5 @@ def main():
 	for i in args:
 		sampleModel(predictRange,i,1)
 
-
-
-main()
+if __name__ == '__main__':
+	main()

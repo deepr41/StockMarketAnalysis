@@ -45,13 +45,15 @@ def regularize(path,df):
             meta = pickle.load(metaFile)
     feature = meta['RegParam']
     df1 = pd.DataFrame()
-    df1[0]=1*(len(df)-1)
+    
     for i in feature.keys():
         temp = feature[i]
         arr = []
+        df1[0]=[1]*(len(df))
         for j in range(0,len(df)):
             arr.append((df[j][i]-temp['Mean'])/(temp['Max']-temp['Min']))
         df1[i]=arr
+
     
     return df1
 

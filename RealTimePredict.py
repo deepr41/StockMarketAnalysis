@@ -1,15 +1,11 @@
-from Model.ModelIntermediate import *
+from Model.ModelIntermediate import predictRealTime,trainModel
 import os
-# import pickle
-# from os.path import isfile
-# import numpy as np
-# import pandas as pd
-# import csv
-# from Model.GradientBoostedTrees import GBTPredict, GBTRegressor, GBTTrain
-# from Model.preprocessing import prepareData
-# from Model.Regularizer import regularize
-# from Model.formatScript import findRSI,findMFI,findEMA,findMACD,findSO
-from Model.Regularizer import *
+import numpy as np
+import pandas as pd
+from Model.preprocessing import prepareData
+from Model.Regularizer import regularize,initRegularize
+
+daysPred = 7
 
 def main():
     args = os.listdir("./Data/")
@@ -32,7 +28,7 @@ def main():
         trainModel("./Data/"+i,1,df1,y)
 
 
-        predictRealTime("./Data/"+i,1,7)
+        predictRealTime("./Data/"+i,1,daysPred)
         
 
 if __name__ == '__main__':

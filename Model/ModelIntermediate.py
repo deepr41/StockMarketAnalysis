@@ -98,7 +98,7 @@ def predictRealTime(path,mode,daysLength):
         with open(path+"/"+name+"regressor.p",'rb') as file:
             reg = pickle.load(file)
     df = pd.read_csv(path+'/Data.csv')
-    df = df[-30:]
+    df = df[-40:]
     df.dropna(inplace=True)
     df.reset_index(inplace=True)
     try:
@@ -133,7 +133,7 @@ def predictRealTime(path,mode,daysLength):
         findMACD(df)
 
     #post processing of data
-    predValues = df[-(daysLength+1):]
+    predValues = df[-daysLength*2:]
     predValues.reset_index(inplace = True)
     predValues = predValues.drop(columns=['index'])
 
@@ -152,12 +152,6 @@ def predictRealTime(path,mode,daysLength):
 
         
 
-
-
-
-
-        
-
 def predictLowAndHigh(df):
     rsi = np.float64(df['RSI'][-1:])
     openVal = np.float64(df['Open'][-1:])
@@ -172,5 +166,5 @@ def predictLowAndHigh(df):
     return low,high
 
 def predictVolume(df):
-    return np.mean(df['Volume'][-10:])
+    return np.mean(df['Volume'][-4:])
     

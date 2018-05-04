@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import pickle
 def populateData():
-    df = pd.read_csv("/home/deep/StockMarketAnalysis/Companies.txt")
+    df = pd.read_csv("./Companies.txt")
     if not(os.path.isdir('./Data')):
         os.mkdir('./Data')
 

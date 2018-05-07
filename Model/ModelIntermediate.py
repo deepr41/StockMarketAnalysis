@@ -166,5 +166,31 @@ def predictLowAndHigh(df):
     return low,high
 
 def predictVolume(df):
-    return np.mean(df['Volume'][-4:])
+    volList = df['Volume'][-10:].tolist()
+    diff = df['Diff'][-10:].tolist()
+
+    volList,diff = col2sort(volList,diff)
+    val = df['Diff'][-1:]
+    val = np.float64(val)
+    index = 0
+    for i in range(0,len(volList)):
+        if(val < diff[i]):
+            index = i
+            break
+    return volList[index]
     
+        
+    
+def col2sort(a,b):
+    c = []
+    d = []
+    while (len(a)!=0):
+        min = 0
+        for j in range(0,len(a)):
+            if(a[j]<a[min]):
+                min = j
+        c.append(a[min])
+        d.append(b[min])
+        del a[min]
+        del b[min]
+    return c,d

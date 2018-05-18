@@ -96,7 +96,7 @@ def createPiChart():
     for j in uniqueTypes:
         for i in piDetails:
             if(piDetails[i]['Type']==j):
-                perChangeType[uniqueTypes.index(j)] = perChangeType[uniqueTypes.index(j)] +  piDetails[i]['PerChange']
+                perChangeType[uniqueTypes.index(j)] +=  abs(piDetails[i]['PerChange'])
     total = np.sum(perChangeType)
     perChange = list(map(lambda x:x/total,perChangeType))
     plt.pie(perChange,labels=uniqueTypes,colors=indexcolours,autopct='%1.1f%%',startangle=90)

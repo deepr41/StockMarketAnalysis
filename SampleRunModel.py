@@ -71,10 +71,11 @@ def sampleModel(predictqiRange,companyName,mode):
 	plt.title(companyName[:-17])
 	plt.legend()
 	# fig.savefig("./Data/"+companyName+"/Figure.png")
-	if(mode==1):
-		plt.savefig("./Data/"+companyName+"/GBTExample.png")
-	elif(mode==2):
-		plt.savefig("./Data/"+companyName+"/ARIMAExample.png")
+	
+	# if(mode==1):
+	# 	plt.savefig("./Data/"+companyName+"/GBTExample.png")
+	# elif(mode==2):
+	# 	plt.savefig("./Data/"+companyName+"/ARIMAExample.png")
 	plt.close()
 	
 

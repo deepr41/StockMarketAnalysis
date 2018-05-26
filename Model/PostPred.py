@@ -111,7 +111,7 @@ def giveColour(uniqueTypes,Type,colours):
 
 
 
-def main():
+def postPred():
     for i in os.listdir("./Data/"):
         print(i)
         createGraphs("./Data/",i)
@@ -123,4 +123,4 @@ def main():
     
 
 if __name__ == '__main__':
-    main()
+    postPred()

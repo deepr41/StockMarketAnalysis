@@ -5,9 +5,12 @@ import pandas as pd
 from Model.preprocessing import prepareData
 from Model.Regularizer import regularize,initRegularize
 
-daysPred = 7
+from Model.ModelIntermediate import createModel
 
-def main():
+
+def realTimepred():
+    daysPred = 7
+    
     args = os.listdir("./Data/")
     for i in args:
         print(i)
@@ -25,6 +28,9 @@ def main():
         df = prepareData(df,1)
         initRegularize("./Data/"+i,df)
         df1 = regularize('./Data/'+i,df)
+
+        
+        createModel("./Data/"+i,1)
         trainModel("./Data/"+i,1,df1,y)
 
 
@@ -32,5 +38,5 @@ def main():
         
 
 if __name__ == '__main__':
-    main()
+    realTimepred()
 

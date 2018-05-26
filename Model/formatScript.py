@@ -155,7 +155,7 @@ def formatData(folderPath,rawPath,outputPath):
 
 
 
-def main():
+def formatHelper():
     dataPath = "./Data/"
     if(len(sys.argv[1:])==0):
         args = args = os.listdir(dataPath)
@@ -169,4 +169,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    formatHelper()

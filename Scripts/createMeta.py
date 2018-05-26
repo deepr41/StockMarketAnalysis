@@ -21,11 +21,11 @@ def populateData():
         obj['Capilatization'] = df['Cap'][i]
         with open('./Data/'+folderName+'/data.meta','wb') as openfile:
             pickle.dump(obj,openfile)
-    updateRawData()
+    # updateRawData()
 
 def updateRawData():
     os.system('Rscript Scripts/GetCleanData.R')
-    os.system('python Model/formatScript.py')
+    # os.system('python Model/formatScript.py')
 
 def main():
     populateData()

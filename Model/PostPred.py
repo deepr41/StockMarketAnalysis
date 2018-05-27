@@ -5,10 +5,15 @@ from matplotlib import pyplot as plt
 import matplotlib
 import datetime
 import pickle
+from datetime import datetime as myDate
 
+currDate = myDate.now()    
+today = "" + str(currDate.day) + "-" + str(currDate.month) + "-"+str(currDate.year)
 
 
 def createGraphs(path,companyName):
+    currDate = myDate.now()    
+    today = "" + str(currDate.day) + "-" + str(currDate.month) + "-"+str(currDate.year)
     df = pd.read_csv(path+companyName +'/PredictedValues.csv')
     dayslength = int(len(df)/2)
     # print(dayslength)
@@ -40,7 +45,7 @@ def createGraphs(path,companyName):
     plt.title(companyName)
     plt.legend()
     plt.xticks([0,4,8,12,14])
-    plt.savefig(path+companyName+'/Future.png')
+    plt.savefig(path+companyName+'/Predictions'+today+'.png')
     plt.close()
 
 
@@ -56,7 +61,7 @@ def processMeta():
         startClose = df['Close'][dayslength-1]
         finalClose = df['Close'][dayslength*2-1]
         percentChange = (finalClose-startClose)/startClose * 100
-        print(startClose,finalClose,percentChange)
+        # print(startClose,finalClose,percentChange)
         meta = {}
         if (os.path.isfile(path+i+"/data.meta")):
             with open(path+i+'/data.meta','rb') as metaFile:
@@ -92,17 +97,47 @@ def createPiChart():
         if not (piDetails[i]['Type'] in uniqueTypes):
             uniqueTypes.append(piDetails[i]['Type'])
     perChangeType =[np.float(0)]*len(uniqueTypes)
-    print(perChangeType)
+    # print(perChangeType)
     for j in uniqueTypes:
         for i in piDetails:
             if(piDetails[i]['Type']==j):
-                perChangeType[uniqueTypes.index(j)] +=  abs(piDetails[i]['PerChange'])
+                perChangeType[uniqueTypes.index(j)] += (piDetails[i]['PerChange'])
     total = np.sum(perChangeType)
-    perChange = list(map(lambda x:x/total,perChangeType))
-    plt.pie(perChange,labels=uniqueTypes,colors=indexcolours,autopct='%1.1f%%',startangle=90)
-    plt.legend(uniqueTypes,loc = 'upper right')
-    plt.savefig("./IndustryComparision.png")
-    # plt.show()        
+    print(perChangeType)
+    posList = []
+    posListLabels=[]
+    negList = []
+    negListLabels=[]
+    
+    for i in range(0,len(perChangeType)):
+        if( perChangeType[i]>=0):
+            posList.append(perChangeType[i])
+            posListLabels.append(uniqueTypes[i])
+        else:
+            negList.append(perChangeType[i])
+            negListLabels.append(uniqueTypes[i])    
+    negList = list(map(lambda x:abs(x),negList))
+    postotal = np.sum(posList)
+    negtotal = np.sum(negList)
+    posChange = list(map(lambda x:x/postotal,posList))
+    negChange = list(map(lambda x:x/negtotal,negList))
+
+
+    # perChange = list(map(lambda x:x/total,perChangeType))
+    plt.figure(num=None, figsize=(15, 6), dpi=80, facecolor='w', edgecolor='k')
+    plt.subplot(121)
+    plt.pie(posChange,colors=indexcolours[:len(posChange)],autopct='%1.1f%%',startangle=90)
+    plt.legend(posListLabels,loc = 'upper right')
+    plt.title("Positive Change")
+    plt.subplot(122)
+    plt.pie(negChange,colors=indexcolours[:len(negChange)],autopct='%1.1f%%',startangle=90)
+    plt.legend(negListLabels,loc = 'upper right')
+    plt.title("Negative Change")
+    plt.suptitle(today + " total Change")
+
+
+    plt.savefig("./IndustryComparision"+today+".png")
+    # plt.show()
 
 def giveColour(uniqueTypes,Type,colours):
     # print()

@@ -5,4 +5,6 @@
 ./Jupyter/**
 .ipynb_checkpoints
 __pycache__
-*.png
+*.csv
+*.meta
+*.p

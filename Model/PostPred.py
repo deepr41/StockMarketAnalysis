@@ -5,15 +5,15 @@ from matplotlib import pyplot as plt
 import matplotlib
 import datetime
 import pickle
-from datetime import datetime as myDate
+from datetime import datetime, timedelta
 
-currDate = myDate.now()    
-today = "" + str(currDate.day) + "-" + str(currDate.month) + "-"+str(currDate.year)
-
+def getDate():
+    df = pd.read_csv("./Data/BOSCHLTD_NS/Data.csv")
+    return df['Date'][-1:].tolist()[0]
 
 def createGraphs(path,companyName):
-    currDate = myDate.now()    
-    today = "" + str(currDate.day) + "-" + str(currDate.month) + "-"+str(currDate.year)
+    
+    today = getDate()
     df = pd.read_csv(path+companyName +'/PredictedValues.csv')
     dayslength = int(len(df)/2)
     # print(dayslength)
@@ -26,16 +26,18 @@ def createGraphs(path,companyName):
     
     # Index dates correctly
     real[-1:]['Date'].iloc[0]
-    startday = datetime.datetime.strptime(real[-1:]['Date'].iloc[0],"%Y-%m-%d")
+    today = getDate()
+    
+    startday = datetime.strptime(real[-1:]['Date'].iloc[0],"%Y-%m-%d")
     arr = []
     for i in range(0,dayslength+1):
         for j in range(0,3):
             if (startday.isoweekday()==6 or startday.isoweekday()==7):
-                startday =startday +  datetime.timedelta(days = 1)
+                startday =startday +  timedelta(days = 1)
             else:
                 break
         arr.append([str(startday.date())])
-        startday =startday +  datetime.timedelta(days = 1)
+        startday =startday +  timedelta(days = 1)
     datesFrame = (pd.DataFrame(arr,columns=['Date']))
     pred.index=datesFrame['Date']
 
@@ -75,6 +77,8 @@ def processMeta():
 
 
 def createPiChart():
+    today = getDate()
+    
     path = "./Data/"
     piDetails = {}
     args = os.listdir(path)
@@ -124,7 +128,7 @@ def createPiChart():
 
 
     # perChange = list(map(lambda x:x/total,perChangeType))
-    plt.figure(num=None, figsize=(15, 6), dpi=80, facecolor='w', edgecolor='k')
+    plt.figure(num=None, figsize=(13, 6), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(121)
     plt.pie(posChange,colors=indexcolours[:len(posChange)],autopct='%1.1f%%',startangle=90)
     plt.legend(posListLabels,loc = 'upper right')
@@ -136,7 +140,7 @@ def createPiChart():
     plt.suptitle(today + " total Change")
 
 
-    plt.savefig("./IndustryComparision"+today+".png")
+    plt.savefig("./IndustryComparision/"+today+".png")
     # plt.show()
 
 def giveColour(uniqueTypes,Type,colours):

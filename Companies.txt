@@ -21,4 +21,3 @@
 "BOSCHLTD.NS","Bosch","Automobile","Mid"
 "HEROMOTOCO.NS","Hero Motocorp","Automobile","Mid"
 "TATAMTRDVR.NS","Tata Motors","Automobile","Small"
-"VIPIND.NS","VIP Industries","Banking","Mid"

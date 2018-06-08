@@ -136,7 +136,6 @@ def predictRealTime(path,mode,daysLength):
     predValues = df[-daysLength*2:]
     predValues.reset_index(inplace = True)
     predValues = predValues.drop(columns=['index'])
-
     with open(path+'/PredictedValues.csv','w') as csvFile:
         fieldnames = predValues.columns.tolist()
         writer = csv.DictWriter(csvFile, fieldnames=fieldnames)
